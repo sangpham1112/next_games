@@ -18,13 +18,13 @@ async function getGames() {
   if (!res.ok) {
     console.log("Error");
   }
-  const data = await res.json();
 
-  return data.slice(0, 9);
+  return res.json();
 }
 
 const SearchPage = async ({ searchParams }) => {
   const data = await getGames();
+  const firstGames = data.slice(0, 9);
   const query = searchParams?.query || "";
   const result = data?.filter((game) =>
     game.title.toLowerCase().includes(query)
@@ -51,7 +51,11 @@ const SearchPage = async ({ searchParams }) => {
 
       <SearchForm />
       <Suspense key={query} fallback="Loading...">
-        <SearchGames result={result} />
+        {query ? (
+          <SearchGames result={result} />
+        ) : (
+          <SearchGames result={firstGames} />
+        )}
       </Suspense>
     </main>
   );
